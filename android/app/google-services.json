@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "40502858901",
+    "project_id": "dooresteps",
+    "storage_bucket": "dooresteps.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:40502858901:android:e873ddf747ff14c364379c",
+        "android_client_info": {
+          "package_name": "com.dooresteps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmIQNozudHOGa7L2nBTdCY4ebSCbtTJ7U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
