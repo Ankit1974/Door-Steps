@@ -41,7 +41,7 @@
   
   . Clicking on an image displays an alert with the image number.
 
- ### Top Section Items:
+ ## Top Section Items:
  . A separate section for top-rated or featured items.
  
  . Items are fetched from Firestore and displayed in a grid format.
