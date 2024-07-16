@@ -25,7 +25,7 @@ const FurnitureMain = ({ navigation }) => {
                 const StudyRef = firestore().collection("Study & Office Furniture");
                 const DiningRef = firestore().collection("Dining & Kitchen");
                 const OutdoorRef = firestore().collection("Outdoor Furniture");
-                const kidsRef = firestore().collection("Kids Room");
+                const kidsRef = firestore().collection("Kids' Room");
                 const StorageRef = firestore().collection("Storage Furniture");
                 const hiddenRef = firestore().collection("Hidden Gems");
                 const MaterialRef = firestore().collection("Material Type");

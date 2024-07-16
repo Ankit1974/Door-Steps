@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Image, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import ViewPager from 'react-native-pager-view';
 
-const {} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const ImageAdapter = () => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -38,12 +38,12 @@ const ImageAdapter = () => {
         onPageSelected={onPageSelected}
       >
         {imageList.map((image, index) => (
-          <View key={index}>
+          <View key={index} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <TouchableOpacity onPress={() => onImagePress(index)}>
               <Image
                 source={image}
-                style={{ width: '100%', height: '100%' }}
-                resizeMode="cover"
+                style={{ width: width, height: height }}
+                resizeMode="contain"
               />
             </TouchableOpacity>
           </View>

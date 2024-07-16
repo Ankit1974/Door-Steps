@@ -1,123 +1,122 @@
-import React, {} from 'react';
-import { View, ScrollView, TouchableOpacity , TextInput, StyleSheet, Text, Image } from 'react-native';
+import React, { useEffect, useState,} from 'react';
+import { View, Text, TextInput, StyleSheet,Image, FlatList } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import ImageAdapter from '../../Common/HelperFile/ImageAdapter';
 import Home from '../../Common/HelperFile/Home';
 import HomeTopSection from '../../Common/HelperFile/HomeTopSection';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Icon from 'react-native-vector-icons/Feather';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
-
+import { useNavigation } from '@react-navigation/native';
 
 const HomeScreens = () => {
+  const [isConnected, setIsConnected] = useState(true);
+  const navigation = useNavigation();
 
-  const navigation = useNavigation(); // Initialize useNavigation hook
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsConnected(state.isConnected);
+    });
 
-  const handleCategoriesPress = () => {
-    
-      navigation.navigate('MainCategories'); // Navigate to MainCategories screen
-      
-  };
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
-  const handleCategoriesPress2 = () => {
-    navigation.navigate('AccountMain'); // Navigate to Account Screen
-     
-  };
+  if (!isConnected) {
+    return (
+      <View style={styles.noConnectionContainer}>
+        <Icon name="disconnect" size={70} color="red" />
+        <Text style={styles.noConnectionText}>No Connection</Text>
+        <Text style={styles.noConnectionSubText}>Please check your internet connectivity and try again.</Text>
+      </View>
+    );
+  }
 
-  const handleCategoriesPress3 = () => {
-    navigation.navigate('NotificationScreen'); // Navigate to Account Screen
-     
-  };
-    
-  return (
-    <><ScrollView>
-          <View style={Styles.container}> 
-          <View style={Styles.header}>
-      <TouchableOpacity style={Styles.button}> 
-        <Text style={Styles.buttonText}>Doore Step</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={Styles.button}>
-        <Text style={Styles.buttonText}>Grocery</Text>
-      </TouchableOpacity>
-    </View>
-        <View  style={Styles.inputContainer}>
-        <Icon name="search" size={18} color="#666" />
-              <TextInput
-                  style={Styles.input}
-                  placeholder="Search" />
-                    <View style={Styles.iconContainer}>
-          <Icon name="mic" size={20} color="#666" style={Styles.icon} />
-          <Icon name="camera" size={20} color="#666" style={Styles.icon}/>
-        </View>
-                  </View>
-
-              <View style={Styles.imageSlider}>
-                  <ImageAdapter />
-              </View>
-
-              <Home navigation={navigation}/>
-
-              <View style={Styles.topSelectionContainer}>
-                  <Text style={{ fontSize: 25, fontWeight: 'bold', color: 'black' }}>Top Selection</Text>
-                  <HomeTopSection />
-              </View>
-
-              <View>
-
-                  <Image
-                      source={{ uri: 'add2' }}
-                      style={{ width: 420, height: 200 , marginBottom:40}} // Set width and height as needed
-                  />
-
-              </View>
-
-          </View>
-
-      </ScrollView>
-      <View style={Styles.bottomNavigation}>
-                <TouchableOpacity style={{ width: '18%', height: 70, justifyContent: 'center', alignItems: 'center' }}>
-                    <AntDesign name="home" color={'blue'} size={25} />
-                    <Text style={Styles.navText}>Home</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={{ width: '25%', justifyContent: 'center', alignItems: 'center' }} onPress={handleCategoriesPress3}>
-                    < Ionicons name="notifications" color={'blue'} size={25} />
-                    <Text style={Styles.navText}>Notification</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={{ width: '23%', justifyContent: 'center', alignItems: 'center' }} onPress={handleCategoriesPress}>
-                    <MaterialIcons name="category" color={'blue'} size={27} />
-                    <Text style={Styles.navText} >Categories</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={{ width: '17%', justifyContent: 'center', alignItems: 'center' }}>
-                    <AntDesign name="shoppingcart" color={'blue'} size={25} />
-                    <Text style={Styles.navText}>Cart</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={{ width: '17%', justifyContent: 'center', alignItems: 'center' }} onPress={handleCategoriesPress2}>
-                    < EvilIcons name="user" color={'blue'} size={35} />
-                    <Text style={Styles.navText}>Account</Text>
-                </TouchableOpacity>
+  const renderItem = ({ item }) => {
+    switch (item.type) {
+      case 'search':
+        return (
+          <View style={styles.inputContainer}>
+            <Icon name="search" size={18} color="#666" />
+            <TextInput style={styles.input} placeholder="Search" />
+            <View style={styles.iconContainer}>
+              <Icon name="mic" size={20} color="#666" style={styles.icon} />
+              <Icon name="camera" size={20} color="#666" style={styles.icon} />
             </View>
-        </>
+          </View>
+        );
+      case 'slider':
+        return (
+          <View style={styles.imageSlider}>
+            <ImageAdapter />
+          </View>
+        );
+      case 'home':
+        return <Home navigation={navigation} />;
+      case 'topSelection':
+        return (
+          <View style={styles.topSelectionContainer}>
+            <Text style={styles.topSelectionText}>Top Selection</Text>
+            <HomeTopSection navigation={navigation} />
+          </View>
+        );
+      case 'ad':
+        return (
+          <View>
+            <Image source={{ uri: 'add2' }} style={styles.adImage} />
+          </View>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const data = [
+    { type: 'search' },
+    { type: 'slider' },
+    { type: 'home' },
+    { type: 'topSelection' },
+    { type: 'ad' },
+  ];
+
+  return (
+    <>
+      <FlatList
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={(index) => index.toString()}
+        contentContainerStyle={styles.container}
+      />
+      
+    </>
   );
 };
 
-const Styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
-    margin: 0,
+    flexGrow: 1,
+    backgroundColor: '#fff',
   },
-  header: {
+  inputContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#eee',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginTop: 20,
+    borderRadius: 2,
+    height: 40,
+    marginTop: 10,
+    paddingHorizontal: 12,
   },
   input: {
-    marginVertical: 0,
     backgroundColor: '#eee',
     padding: 10,
-    margin: 10,
-    color:"black"
+    color: 'black',
+    flex: 1,
+  },
+  iconContainer: {
+    flexDirection: 'row',
+  },
+  icon: {
+    marginLeft: 10,
   },
   imageSlider: {
     marginVertical: 10,
@@ -129,46 +128,45 @@ const Styles = StyleSheet.create({
     padding: 10,
     marginBottom: 0,
   },
-  button: {
-    backgroundColor: '#9c27b0',
-    paddingVertical: 10,
-    paddingHorizontal: 40,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
+  topSelectionText: {
+    fontSize: 25,
     fontWeight: 'bold',
+    color: 'black',
   },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#eee',
-    justifyContent: 'space-between',
-    borderRadius: 2,
-    height: 40,
-    marginTop:10,
-    paddingHorizontal: 12,
-  },
-  icon: {
-    marginLeft: 10,
-  },
-  iconContainer: {
-    flexDirection: 'row',
-  },
-  bottomNavigation: {
+  adImage: {
     width: '100%',
-    height: 50,
-    backgroundColor: '#fff',
-    position: 'absolute', 
-    bottom: 0, 
-    flexDirection: 'row', 
-    alignItems: 'center' 
+    height: 200,
+    marginBottom: 40,
   },
-  navText:{
-    fontSize: 10 , 
-    color:"black"
-  }
+  notificationCount: {
+    position: 'absolute',
+    top: -5,
+    right: 22,
+    backgroundColor: 'red',
+    color: 'white',
+    borderRadius: 50,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    fontSize: 10,
+  },
+  noConnectionContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  noConnectionText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: 'black',
+  },
+  noConnectionSubText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: 'black',
+  },
 });
 
 export default HomeScreens;

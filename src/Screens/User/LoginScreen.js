@@ -29,7 +29,7 @@ export default function LoginScreen() {
         setMessage('');
         console.log(isUserLogin);
 
-        navigation.navigate('home', {
+        navigation.navigate('Home', {
           email: isUserLogin.user.email,
           uid: isUserLogin.user.uid,
         });
@@ -54,9 +54,6 @@ export default function LoginScreen() {
         case 'auth/invalid-credential':
           Alert.alert('Invalid Credentials', 'You entered wrong email or password.');
           break;
-       // default:
-         // Alert.alert('Login Error', err.message);
-         // break;
       }
     }
   };

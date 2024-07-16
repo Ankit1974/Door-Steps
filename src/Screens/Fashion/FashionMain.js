@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList,Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import styles from '../../../Common/Components/styles';
-
 
 const FashionsMain = ({ navigation }) => {
     const [MenItems, setMenItems] = useState([]);
     const [footwearItems, setFootwearItems] = useState([]);
-    const [WomenItems , setWomenItems] = useState([]);
-    const [BagsItems , setBagsItems] = useState([]);
-    const [EssentialsItems , setEssentialsItems] = useState([]);
-    const [WomenEssentialsItems , setWomenEssentialsItems] = useState([]);
-    const [KidsItems , setKidsItems] = useState([]);
+    const [WomenItems, setWomenItems] = useState([]);
+    const [BagsItems, setBagsItems] = useState([]);
+    const [EssentialsItems, setEssentialsItems] = useState([]);
+    const [WomenEssentialsItems, setWomenEssentialsItems] = useState([]);
+    const [KidsItems, setKidsItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -26,7 +25,7 @@ const FashionsMain = ({ navigation }) => {
                 const WomenEssentialsRef = firestore().collection("Women's Essentials");
                 const KidsRef = firestore().collection("Kids Fashion");
 
-                const [menSnapshot, footwearSnapshot, womenSnapshot , bagsSnapshot ,  essentialsSnapshot , womenessentialsSnapshot , kidsSnapshot] = await Promise.all([
+                const [menSnapshot, footwearSnapshot, womenSnapshot, bagsSnapshot, essentialsSnapshot, womenessentialsSnapshot, kidsSnapshot] = await Promise.all([
                     menRef.get(),
                     footwearRef.get(),
                     womenRef.get(),
@@ -34,7 +33,6 @@ const FashionsMain = ({ navigation }) => {
                     EssentialsRef.get(),
                     WomenEssentialsRef.get(),
                     KidsRef.get(),
-                    
                 ]);
 
                 const menItems = menSnapshot.docs.map(doc => ({ id: doc.id, text: doc.data().Name, imageUrl: doc.data().Image }));
@@ -51,7 +49,7 @@ const FashionsMain = ({ navigation }) => {
                 setBagsItems(bagsItems);
                 setEssentialsItems(essentialsItems);
                 setWomenEssentialsItems(WomenessentialsItems);
-                setKidsItems(kidsItems)
+                setKidsItems(kidsItems);
                 setLoading(false);
             } catch (error) {
                 setError(error);
@@ -66,14 +64,26 @@ const FashionsMain = ({ navigation }) => {
         navigation.navigate(category.text);
     };
 
-    const renderCategoryItem = ({ item }) => (
-        <TouchableOpacity onPress={() => handleCategoryPress(item)}>
-            <View style={styles.categoryContainer}>
-                <Image source={{ uri: item.imageUrl }} style={styles.icon} onError={() => console.log("Image failed to load")} />
-                <Text style={styles.categoryText}>{item.text}</Text>
-            </View>
-        </TouchableOpacity>
-    );
+    const renderCategoryItem = ({ item }) => {
+        if (!item.text) {
+            return null; // If item.text is undefined or null, return null
+        }
+    
+        const itemNameParts = item.text.split(' & ');
+
+        return (
+            <TouchableOpacity onPress={() => handleCategoryPress(item)}>
+                <View style={styles.categoryContainer}>
+                    <Image source={{ uri: item.imageUrl }} style={styles.icon} onError={() => console.log("Image failed to load")} />
+                    {itemNameParts.map((part, index) => (
+                        <Text key={index} style={[styles.categoryText, { marginTop: index > 0 ? 5 : 0 }]} numberOfLines={2} ellipsizeMode="tail">
+                            {part}
+                        </Text>
+                    ))}
+                </View>
+            </TouchableOpacity>
+        );
+    };
 
     if (loading) {
         return (
@@ -138,7 +148,7 @@ const FashionsMain = ({ navigation }) => {
                 scrollEnabled={false}
             />
 
-             <Text style={styles.header}>Women's Essentials</Text>
+            <Text style={styles.header}>Women's Essentials</Text>
             <FlatList
                 data={WomenEssentialsItems}
                 renderItem={renderCategoryItem}
@@ -158,6 +168,5 @@ const FashionsMain = ({ navigation }) => {
         </ScrollView>
     );
 };
-
 
 export default FashionsMain;

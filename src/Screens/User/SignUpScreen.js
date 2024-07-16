@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,8 +9,9 @@ import {
   StatusBar,
   Image
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 export default function SignUpScreen() {
   const [email, setEmail] = useState('');
@@ -21,33 +22,40 @@ export default function SignUpScreen() {
 
   const handleSignup = async () => {
     try {
-      if(email.length > 0 && password.length > 0){
+      if (email.length > 0 && password.length > 0) {
         if (!validateEmail(email)) {
           alert('Invalid Email', 'Please enter a valid email address.');
           return;
         }
-        if(!validatePassword(password)){
-          alert('Short Password' , 'Password should be at least 6 characters');
+        if (!validatePassword(password)) {
+          alert('Short Password', 'Password should be at least 6 characters');
           return;
         }
-      const isUserCreated = await auth().createUserWithEmailAndPassword(
-        email,
-        password,
-      );
-      console.log(isUserCreated);
 
-      navigation.navigate('Login');
-    }else{
-      alert('Missing Information', 'Please fill in all required fields.')
-    }
+        // Extract name from email
+        const name = email.split('@')[0];
 
-     
+        // Create user in Firebase Authentication
+        const { user } = await auth().createUserWithEmailAndPassword(email, password);
+
+        // Store additional user data in Firestore
+        await firestore().collection('users').doc(user.uid).set({
+          email: user.email,
+          name: name, // Save extracted name to Firestore
+          createdYear: new Date().getFullYear()
+          // Add more user data if needed
+        });
+
+        navigation.navigate('Login');
+      } else {
+        alert('Missing Information', 'Please fill in all required fields.');
+      }
     } catch (err) {
       console.log(err);
-
       setMessage(err.message);
     }
   };
+
   const validateEmail = (email) => {
     // Regular expression for email validation
     const re = /\S+@\S+\.\S+/;
@@ -55,37 +63,41 @@ export default function SignUpScreen() {
   };
 
   const validatePassword = (password) => {
-    // Normal length of Password  
+    // Normal length of Password
     return password.length >= 6;
   };
 
   return (
-      <><View>
-      <Image
-        source={{ uri: 'loginpage' }}
-        style={{ width: 420, height: 400, marginBottom: 40 }} // Set width and height as needed
-      />
-    </View><View style={styles.container}>
+    <>
+      <View>
+        <Image
+          source={{ uri: 'loginpage' }}
+          style={{ width: 420, height: 400, marginBottom: 40 }} // Set width and height as needed
+        />
+      </View>
+      <View style={styles.container}>
         <StatusBar hidden={true} />
         <View>
-          <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: 'bold' , color:'black' }}>
+          <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: 'bold', color: 'black' }}>
             Register Your Account
           </Text>
           <TextInput
             style={styles.inputBox}
             placeholder="Enter Your Email"
+            placeholderTextColor="black"
             value={email}
             onChangeText={value => setEmail(value)} />
           <TextInput
             style={styles.inputBox}
             placeholder="Enter Your Password"
+            placeholderTextColor="black"
             value={password}
             onChangeText={value => setPassword(value)}
             secureTextEntry={true} />
 
           <TouchableOpacity
             style={styles.addButton}
-            onPress={() => handleSignup()}>
+            onPress={handleSignup}>
             <Text style={{ color: '#fff' }}>Signup</Text>
           </TouchableOpacity>
 
@@ -95,15 +107,16 @@ export default function SignUpScreen() {
             style={styles.signup}
             onPress={() => {
               navigation.navigate('Login');
-            } }>
+            }}>
             <Text style={{ color: 'blue' }}>Already Have An Account ?</Text>
           </TouchableOpacity>
         </View>
-      </View></>
+      </View>
+    </>
   );
 }
 
-const { width} = Dimensions.get('screen');
+const { width } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
@@ -118,7 +131,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     marginVertical: 10,
     padding: 10,
-    height:50,
+    height: 50,
   },
   addButton: {
     backgroundColor: 'blue',
@@ -130,3 +143,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+
+

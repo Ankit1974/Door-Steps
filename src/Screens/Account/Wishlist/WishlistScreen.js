@@ -1,30 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { AirbnbRating } from 'react-native-ratings'; // Import AirbnbRating from react-native-ratings
-import Icon from 'react-native-vector-icons/FontAwesome'; // Import Icon
+import auth from '@react-native-firebase/auth';
+import { AirbnbRating } from 'react-native-ratings';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Toast from 'react-native-toast-message';
 
-const BreakfastMain = ({ navigation }) => {
-    const [TravelItems, setTravelItems] = useState([]);
+const WishlistScreen = () => {
+    const [wishlistItems, setWishlistItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const userId = auth().currentUser.uid;
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchWishlistItems = async () => {
             try {
-                const travelRef = firestore().collection("Breakfast Store");
-                const travelSnapshot = await travelRef.get();
-                const travelItems = travelSnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    text: doc.data().Name,
-                    imageUrl: doc.data().Image,
-                    price: doc.data().Price,
-                    oldprice: doc.data().Oldprice,
-                    Discount: doc.data().discount,
-                    delivery: doc.data().Delivery,
-                }));
+                const wishlistRef = firestore().collection('users').doc(userId).collection('wishlist');
+                const wishlistSnapshot = await wishlistRef.get();
+                const wishlistItems = wishlistSnapshot.docs.map(doc => doc.data());
 
-                setTravelItems(travelItems);
+                setWishlistItems(wishlistItems);
                 setLoading(false);
             } catch (error) {
                 setError(error);
@@ -32,24 +27,37 @@ const BreakfastMain = ({ navigation }) => {
             }
         };
 
-        fetchData();
+        fetchWishlistItems();
     }, []);
 
-    const handleProductPress = (product) => {
-        navigation.navigate(product.text);
+    const handleRemoveFromWishlist = async (product) => {
+        try {
+            const wishlistRef = firestore().collection('users').doc(userId).collection('wishlist');
+            const itemSnapshot = await wishlistRef.where('id', '==', product.id).get();
+            itemSnapshot.forEach(doc => doc.ref.delete());
+
+            setWishlistItems(prevItems => prevItems.filter(item => item.id !== product.id));
+            Toast.show({
+                type: 'success',
+                text1: 'Removed from Wishlist',
+                text2: `Product "${product.text}" has been removed from your wishlist.`,
+            });
+        } catch (error) {
+            console.error("Error removing from wishlist: ", error);
+        }
     };
 
-    const renderProductItem = ({ item }) => {
+    const renderWishlistItem = ({ item }) => {
         return (
-            <TouchableOpacity onPress={() => handleProductPress(item)}>
+            <TouchableOpacity style={styles.cardContainer}>
                 <View style={styles.card}>
                     <Image
                         source={{ uri: item.imageUrl }}
                         style={styles.cardImage}
                         onError={() => console.log("Image failed to load")}
                     />
-                    <TouchableOpacity style={styles.wishlistIcon}>
-                        <Icon name="heart" size={20} color="white" />
+                    <TouchableOpacity style={styles.removeIcon} onPress={() => handleRemoveFromWishlist(item)}>
+                        <Icon name="trash" size={20} color="white" />
                     </TouchableOpacity>
                     <Text style={styles.cardText} numberOfLines={2} ellipsizeMode="tail">
                         {item.text}
@@ -67,7 +75,7 @@ const BreakfastMain = ({ navigation }) => {
                     </View>
                     <View style={styles.cardPrice}>
                         <Text style={[styles.discount, styles.arrow]}>{'\u25BE'}</Text>
-                        <Text style={styles.discount}>{item.Discount}%</Text>
+                        <Text style={styles.discount}>{item.discount}%</Text>
                         <Text style={styles.oldPrice}>{item.oldprice}</Text>
                         <Text style={styles.price}>{item.price}</Text>
                     </View>
@@ -95,69 +103,83 @@ const BreakfastMain = ({ navigation }) => {
         );
     }
 
+    if (wishlistItems.length === 0) {
+        return (
+            <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>Your wishlist is empty.</Text>
+            </View>
+        );
+    }
+
     return (
-        <FlatList
-            data={TravelItems}
-            renderItem={renderProductItem}
-            keyExtractor={(item) => item.id.toString()}
-            numColumns={2}
-            contentContainerStyle={styles.flatListContentContainer}
-        />
+        <>
+            <FlatList
+                data={wishlistItems}
+                renderItem={renderWishlistItem}
+                keyExtractor={(item) => item.id.toString()}
+                numColumns={2}
+                contentContainerStyle={styles.flatListContentContainer}
+            />
+            <Toast ref={(ref) => Toast.setRef(ref)} />
+        </>
     );
 };
 
+const { width } = Dimensions.get('window');
+const cardWidth = width * 0.45;
+
 const styles = StyleSheet.create({
+    cardContainer: {
+        width: '50%',
+        padding: 5,
+    },
     card: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        margin: 0,
         backgroundColor: '#fff',
-        borderRadius: 0,
+        borderRadius: 4,
         shadowColor: '#000',
         shadowRadius: 0,
-        elevation: 5,
-        marginLeft: 0,
-        width: 195,
-        height: 300,
-        position: 'relative', // Added to enable absolute positioning within the card
+        elevation: 0,
+        padding: 8,
     },
     cardImage: {
-        width: '80%',
-        height: 157,
+        width: '100%',
+        height: cardWidth * 0.75,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
     },
     cardText: {
-        fontSize: 12,
+        fontSize: 14,
         color: 'black',
         paddingTop: 5,
-        paddingLeft: 12,
+        textAlign: 'left',
     },
     cardPrice: {
         fontSize: 14,
-        flexDirection: 'row', // Align items horizontally
-        alignItems: 'center', // Align items vertically
+        flexDirection: 'row',
+        alignItems: 'center',
         alignSelf: 'flex-start',
-        paddingLeft: 15,
+        paddingLeft: 8,
     },
     arrow: {
         fontSize: 25,
         fontWeight: 'bold',
         color: 'green',
-        marginRight: 5
+        marginRight: 5,
     },
     discount: {
         color: 'green',
-        textDecorationLine: 'none', // To remove default underline
+        textDecorationLine: 'none',
         fontWeight: 'bold',
-        marginRight: 5
+        marginRight: 5,
     },
     oldPrice: {
         textDecorationLine: 'line-through',
-        color: 'gray', // or any color you prefer for the old price
+        color: 'gray',
         fontWeight: 'bold',
-        marginRight: 5
+        marginRight: 5,
     },
     price: {
         color: 'black',
@@ -165,17 +187,18 @@ const styles = StyleSheet.create({
     },
     rating: {
         alignSelf: 'flex-start',
-        paddingLeft: 12,
-        paddingTop: 5
+        paddingLeft: 8,
+        paddingTop: 5,
     },
     delivery: {
         color: 'black',
         fontWeight: 'bold',
-        paddingLeft: 12,
+        paddingLeft: 0,
     },
     deliveryText: {
         color: 'gray',
         fontWeight: 'bold',
+        textAlign: 'left'
     },
     loadingContainer: {
         flex: 1,
@@ -187,19 +210,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    flatListContentContainer: {
-        paddingHorizontal: 0,
-        paddingBottom: 0,
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    wishlistIcon: {
+    emptyText: {
+        fontSize: 16,
+        color: 'gray',
+    },
+    removeIcon: {
         position: 'absolute',
-        top: 10,
-        right: 10,
-        zIndex: 1,
-        backgroundColor: 'gray', // Gray background color for the radius
+        top: 5,
+        right: 5,
+    },
+    flatListContentContainer: {
         padding: 5,
-        borderRadius: 19, // Make the icon's background a circle
     },
 });
 
-export default BreakfastMain;
+export default WishlistScreen;
+

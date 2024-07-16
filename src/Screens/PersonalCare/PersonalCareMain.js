@@ -12,7 +12,7 @@ const PersonalCareMain = ({ navigation }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const beautyRef = firestore().collection("Beauty");
+                const beautyRef = firestore().collection("Beauty ");
                 const [beautySnapshot] = await Promise.all([
                     beautyRef.get(),
                     

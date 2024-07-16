@@ -23,16 +23,16 @@ const ElectronicsMain = ({ navigation }) => {
         const fetchData = async () => {
             try {
                 const laptopsRef = firestore().collection("Laptops");
-                const headphonesRef = firestore().collection("Refrigerators");
-                const smartwatchesRef = firestore().collection("Televisions");
-                const personalRef = firestore().collection("Cooling Appliances");
-                const tabletsRef = firestore().collection("Washing Machines");
-                const computerRef = firestore().collection("Kitchen Appliances");
-                const casesRef = firestore().collection("Home Appliances");
-                const mobileaRef = firestore().collection("Cooling Appliances");
-                const powerbanksRef = firestore().collection("Washing Machines");
-                const smartRef = firestore().collection("Kitchen Appliances");
-                const healthRef = firestore().collection("Home Appliances");
+                const headphonesRef = firestore().collection("Headphones & Speakers");
+                const smartwatchesRef = firestore().collection("Smartwatches");
+                const personalRef = firestore().collection("Personal Care Appliances");
+                const tabletsRef = firestore().collection("Tablets");
+                const computerRef = firestore().collection("Computer Peripheral ");
+                const casesRef = firestore().collection("Cases, Covers & more");
+                const mobileaRef = firestore().collection("Mobile Accessories");
+                const powerbanksRef = firestore().collection("Powerbanks");
+                const smartRef = firestore().collection("Smart Home Automation");
+                const healthRef = firestore().collection("Health Care Devices");
 
 
                 const [laptopsSnapshot, headphonesSnapshot, smartwatchesSnapshot, personalSnapshot, tabletsSnapshot, computerSnapshot, casesSnapshot , mobileaSnapshot , powerbanksSnapshot , smartSnapshot , healthSnapshot] = await Promise.all([

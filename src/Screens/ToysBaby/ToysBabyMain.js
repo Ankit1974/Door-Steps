@@ -50,6 +50,7 @@ const ToysBabyMain = ({ navigation }) => {
     };
 
     const renderCategoryItem = ({ item }) => {
+    
         const itemNameParts = item.text.split(' & ');
     
         return (
