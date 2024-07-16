@@ -29,15 +29,21 @@
 
    ### Network Connectivity Handling
    . Monitors network connectivity to ensure seamless user experience.
+   
    . Displays a message and icon when the device is offline.
+   
    . Prompts users to check their connection and retry.
 
   ### Image Slider
   . Automatic image slider showcasing promotional content.
+  
   . Images change every two seconds and can be manually swiped.
+  
   . Clicking on an image displays an alert with the image number.
 
  ### Top Section Items:
  . A separate section for top-rated or featured items.
+ 
  . Items are fetched from Firestore and displayed in a grid format.
+ 
  . Each item is clickable and navigates to the respective product details.
