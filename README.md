@@ -3,28 +3,28 @@
 
 # Key Features
 
-   ## Authentication :  
+   ## Authentication 
    Users can sign up and log in securely using Firebase Authentication.
 
-   ## Navigation : 
+   ## Navigation 
    The app utilizes React Navigation for smooth navigation between screens, including stack navigation for authentication flows and bottom tab navigation for main app functionalities.
 
-   ## Category Management:  
+   ## Category Management  
    Categories are organized into a user-friendly interface, allowing easy access to different product sections.
 
-   ## Product Listings: 
+   ## Product Listings
    Each category contains a list of products with details such as images, prices, ratings, and descriptions.
 
-   ## Cart Functionality : 
+   ## Cart Functionality 
    Users can add products to their cart, view cart items, and remove items as needed.
 
-   ## Notifications :  
+   ## Notifications  
    Keeps users informed with notifications for order updates, promotions, and more.
 
-   ## Wishlist :  
+   ## Wishlist   
    Users can add products to their wishlist for future reference.
 
-   ## Responsive UI : 
+   ## Responsive UI 
    Designed with a responsive UI to ensure a consistent experience across different device sizes.
 
    ## Network Connectivity Handling
@@ -41,7 +41,7 @@
   
   . Clicking on an image displays an alert with the image number.
 
- ## Top Section Items:
+ ## Top Section Items
  . A separate section for top-rated or featured items.
  
  . Items are fetched from Firestore and displayed in a grid format.
