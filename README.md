@@ -1,83 +1,48 @@
-<<<<<<< HEAD
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Door Steps
 
-# Getting Started
+ ## Overview
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+   Door Step is an e-commerce mobile application developed using React Native. It offers a seamless shopping experience with various categories and features.
 
-## Step 1: Start the Metro Server
+## Key Features
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+ ### Authentication: 
+     Users can sign up and log in securely using Firebase Authentication.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+### Navigation: 
+     The app utilizes React Navigation for smooth navigation between screens, including stack navigation for authentication flows and bottom tab navigation for main app functionalities.
 
-```bash
-# using npm
-npm start
+### Category Management: 
+     Categories are organized into a user-friendly interface, allowing easy access to different product sections.
 
-# OR using Yarn
-yarn start
-```
+### Product Listings: 
+   Each category contains a list of products with details such as images, prices, ratings, and descriptions.
 
-## Step 2: Start your Application
+### Cart Functionality:
+    Users can add products to their cart, view cart items, and remove items as needed.
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+### Notifications: 
+    Keeps users informed with notifications for order updates, promotions, and more.
 
-### For Android
+### Wishlist: 
+    Users can add products to their wishlist for future reference.
 
-```bash
-# using npm
-npm run android
+### Responsive UI: 
+    Designed with a responsive UI to ensure a consistent experience across different device sizes.
 
-# OR using Yarn
-yarn android
-```
+### Network Connectivity Handling
 
-### For iOS
+    . Monitors network connectivity to ensure seamless user experience.
+    . Displays a message and icon when the device is offline.
+    . Prompts users to check their connection and retry.
 
-```bash
-# using npm
-npm run ios
+### Image Slider
+     . Automatic image slider showcasing promotional content.
+     . Images change every two seconds and can be manually swiped.
+     . Clicking on an image displays an alert with the image number.
 
-# OR using Yarn
-yarn ios
-```
+### Top Section Items:
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
-=======
-# Doore-Step
->>>>>>> 669ca1af1c500ac70d2422148abb09965967febd
+     . A separate section for top-rated or featured items.
+     . Items are fetched from Firestore and displayed in a grid format.
+     . Each item is clickable and navigates to the respective product details.
